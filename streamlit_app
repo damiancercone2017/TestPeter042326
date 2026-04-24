@@ -1,0 +1,14 @@
+import streamlit as st
+from agent1_clean_data import run_agent_1
+from agent2_analyze_data import run_agent_2
+
+st.title("Sequential Python Agents Demo")
+
+user_input = st.text_area("Enter your request")
+
+if st.button("Run Agents"):
+    result_1 = run_agent_1(user_input)
+    st.write("Agent 1 Result:", result_1)
+
+    result_2 = run_agent_2(result_1)
+    st.write("Agent 2 Result:", result_2)
