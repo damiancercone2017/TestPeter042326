@@ -1,6 +1,10 @@
-def run_agent_1(user_input):
-    cleaned = user_input.strip().lower()
+def run_agent_1(df):
+    # Example: basic validation
+    row_count = len(df)
+    columns = list(df.columns)
+
     return {
-        "cleaned_text": cleaned,
+        "row_count": row_count,
+        "columns": columns,
         "status": "Agent 1 complete"
     }
