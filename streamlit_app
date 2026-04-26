@@ -1,14 +1,37 @@
 import streamlit as st
+import pandas as pd
 from agent1_clean_data import run_agent_1
 from agent2_analyze_data import run_agent_2
 
 st.title("Sequential Python Agents Demo")
 
-user_input = st.text_area("Enter your request")
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-if st.button("Run Agents"):
-    result_1 = run_agent_1(user_input)
-    st.write("Agent 1 Result:", result_1)
+if uploaded_file is not None:
+    try:
+        df = pd.read_csv(uploaded_file)
+    except Exception as exc:
+        st.error(f"Could not parse the uploaded file: {exc}")
+        st.stop()
+    st.subheader("Uploaded Data Preview")
+    st.dataframe(df.head())
 
-    result_2 = run_agent_2(result_1)
-    st.write("Agent 2 Result:", result_2)
+    if st.button("Run Agents"):
+        result_1 = run_agent_1(df)
+
+        st.subheader("Agent 1 Result")
+        st.write(f"Total rows: {result_1['total_rows']}")
+        st.write(f"Missing values: {result_1['missing_values']}")
+        st.write(f"Duplicate rows: {result_1['duplicate_rows']}")
+
+        if not result_1["rows_with_missing"].empty:
+            st.write("Rows with missing values:")
+            st.dataframe(result_1["rows_with_missing"])
+
+        st.write("Cleaned data:")
+        st.dataframe(result_1["cleaned_data"])
+
+        result_2 = run_agent_2(result_1)
+        st.subheader("Agent 2 Result")
+        st.write(result_2["summary"])
+        st.write("Status:", result_2["status"])
